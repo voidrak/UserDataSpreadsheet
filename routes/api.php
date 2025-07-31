@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
-Route::get('/api', function () {
+Route::get('/', function () {
     return view('welcome');
 });
 
@@ -13,4 +13,4 @@ Route::post('/test-users', function () {
 });
 
 // Your actual route
-Route::post('/api/users', [UserController::class, 'store']);
+Route::post('/post-users', [UserController::class, 'store']);
