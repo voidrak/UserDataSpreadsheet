@@ -24,7 +24,7 @@ class GoogleSheetsService
     $client = new Client();
     $client->setApplicationName('Laravel Google Sheets Integration');
     $client->setScopes(Sheets::SPREADSHEETS);
-    $client->setAuthConfig(storage_path('userdataspreadsheet-36498ef55ca4.json'));
+    $client->setAuthConfig(storage_path('userdataspreadsheet-bc1ec9182d81.json'));
     return $client;
   }
 
