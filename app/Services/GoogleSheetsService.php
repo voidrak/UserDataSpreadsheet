@@ -17,6 +17,11 @@ class GoogleSheetsService
     $this->client = $this->getClient();
     $this->service = new Sheets($this->client);
     $this->spreadsheetId = env('GOOGLE_SHEET_ID');
+
+    // Debug: Check if spreadsheet ID is loaded
+    if (!$this->spreadsheetId) {
+      throw new \Exception('GOOGLE_SHEET_ID not found in environment variables');
+    }
   }
 
   public function getClient()
@@ -24,7 +29,37 @@ class GoogleSheetsService
     $client = new Client();
     $client->setApplicationName('Laravel Google Sheets Integration');
     $client->setScopes(Sheets::SPREADSHEETS);
-    $client->setAuthConfig(storage_path('userdataspreadsheet-bc1ec9182d81.json'));
+
+    // Use the private directory path
+    $credentialsPath = storage_path('app/private/userdataspreadsheet-c93aa4793c04.json');
+
+    if (!file_exists($credentialsPath)) {
+      throw new \Exception('Credentials file not found: ' . $credentialsPath);
+    }
+
+    // Check if file is readable
+    if (!is_readable($credentialsPath)) {
+      throw new \Exception('Credentials file is not readable: ' . $credentialsPath);
+    }
+
+    // Validate JSON content
+    $jsonContent = file_get_contents($credentialsPath);
+    $jsonData = json_decode($jsonContent, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+      throw new \Exception('Invalid JSON in credentials file: ' . json_last_error_msg());
+    }
+
+    if (!isset($jsonData['type']) || $jsonData['type'] !== 'service_account') {
+      throw new \Exception('Invalid service account credentials file');
+    }
+
+    try {
+      $client->setAuthConfig($credentialsPath);
+    } catch (\Exception $e) {
+      throw new \Exception('Invalid credentials file: ' . $e->getMessage());
+    }
+
     return $client;
   }
 

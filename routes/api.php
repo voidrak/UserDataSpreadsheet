@@ -14,3 +14,14 @@ Route::post('/test-users', function () {
 
 // Your actual route
 Route::post('/post-users', [UserController::class, 'store']);
+
+// Test sheets route
+Route::get('/test-sheets', function () {
+    try {
+        $service = new \App\Services\GoogleSheetsService();
+        $sheets = $service->getSheetNames();
+        return response()->json(['sheets' => $sheets]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
